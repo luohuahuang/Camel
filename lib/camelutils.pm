@@ -1,6 +1,5 @@
 package camelutils;
 
-use strict;
 use File::Spec::Functions;
 use File::stat;
 use File::Path;
@@ -13,7 +12,11 @@ use Exporter;
 our @ISA=('Exporter');
 our @EXPORT=('getOSPath',
 'getRand',
-'getDate');
+'getDate',
+'loader',
+'%fshash');
+
+my $base_dir = getOSPath("../webapps"); 
 
 sub getOSPath {
 	my ($path) = @_;
@@ -44,6 +47,15 @@ sub getDate {
 sub getRand {
 	my $range = 1000;
 	return int(rand($range));
+}
+
+sub loader{
+	my @files = `find $base_dir -type f -print`;
+	chomp (@files);
+	foreach (@files){
+		$fshash{$_}++;
+	}
+	return %fshash;
 }
 
 

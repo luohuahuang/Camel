@@ -19,7 +19,7 @@ sub debugPrint
 }
 
 my $log_dir = getOSPath("../logs");
-my $base_dir = "../webapps"; 
+my $base_dir = getOSPath("../webapps"); 
 # level - 0 - ERROR - Error info 
 # level - 1 - INFO - useful info
 # level - 2 - Dev - Debug info
