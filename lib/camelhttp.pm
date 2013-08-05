@@ -21,7 +21,7 @@ END{
 
 sub camelHttpCore{  
 	
-	# autoreaping of zombies
+	# autoreaping of zombies. Has to comment out that or the child process could not run perl command
 	#$SIG{CHLD} = 'IGNORE';  
 	while (1)  
 	{   
@@ -31,13 +31,10 @@ sub camelHttpCore{
 			die logger(0, "$0 - Camel can't fork a worker : $!") unless defined $pid;
 			while (my $req = $con->get_request){
 				my $path = $base_dir . $req->uri->path;
-				_getRequestInfo($req);
+				#_getRequestInfo($req);
 				logger(0, "$0 - Camel is working for - GET $path ");
 				if (_getFile($path) eq "YES"){		
-					if ($req->method eq 'GET'){
-						logger(0, "$0 - Retrieving $path");
-						$con->send_file_response("$path");
-					} elsif ($req->method eq 'POST') {
+					if (($req->method eq 'POST') or ($path =~ m/\.pl$/)) {
 						my $params = $req->content;
 						chomp($params);
 						$req->method("GET");
@@ -50,6 +47,9 @@ sub camelHttpCore{
 						$con->send_file_response("$tmpfile");
 						system("rm -fr $tmpfile");
 						
+					} elsif ($req->method eq 'GET'){
+						logger(0, "$0 - Retrieving $path");
+						$con->send_file_response("$path");
 					} else {
 						$con->send_error(RC_FORBIDDEN);
 					}
@@ -82,9 +82,11 @@ sub _destroy {
 
 sub _getRequestInfo{
 	my $req = shift;
+	print "=============================================== \n";
 	print "uri: \n" . $req->uri . "\n";
 	print "content: \n" . $req->content . "\n";
 	print "as_string: \n" . $req->as_string . "\n";
+	print "=============================================== \n";
 }
 
 

@@ -28,10 +28,36 @@ sub _init {
 	}
 }
 
+# check whether form type is "multipart/form-data"
+sub parseContent{
+	my $paramstr = shift;
+	my $pos = index($paramstr, "name=");
+	my $replaced = substr($paramstr, 0, $pos);
+	my @array = split(/$replaced/, $paramstr);
+	my $s = "";
+	my $count = 0;
+	my $sclr = scalar(@array) - 1;
+	foreach my $line (@array){
+		if(($count > 0) and ($count < $sclr)){
+			$line =~ s/name=//;
+			$line =~ s/\s+/=/;
+			$line =~ s/^\s*|\s*$//g;
+			chomp($line);
+			$s .= $line . "\&";
+		}
+		$count++;
+	}
+	$s = substr($s,0,length($s)-1);
+	return $s;
+}
+
 sub getParams{
 	my $s = shift;
 	#$s = "hahaid=haha1&abcid=abc2&Submit=submit";
 	chomp($s);
+	if ($s =~ m/form-data/){
+		$s = parseContent($s);
+	}
 	my %params = {};
 	my @pairs = split(/\&/,$s); 	
 	foreach (@pairs){
