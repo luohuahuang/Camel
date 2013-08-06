@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- Camel Web Server -->
+<!-- The contents of this file will be loaded for each web application -->
+<Context>
+    <!-- Server Host -->
+    <ServerHost>localhost</ServerHost>
+    
+    <!--Define a non-SSL HTTP/1.1 port -->
+    <PortNumber>8080</PortNumber>
+
+    <!-- root dir for all of the web application -->
+    <BaseDir>../webapps</BaseDir>
+	
+    <!-- log dir -->
+    <LogDir>../logs</LogDir>
+    
+    <!-- temp dir -->
+    <TemporaryDir>../temp</TemporaryDir>
+    
+    <!-- debug level -->
+    <DebugLevel>2</DebugLevel>    
+    
+    <WelcomeList>
+        <WeclomeFile>index.html</WeclomeFile>
+        <WeclomeFile>index.htm</WeclomeFile>
+        <WeclomeFile>index.pl</WeclomeFile>
+    </WelcomeList>
+
+</Context>
