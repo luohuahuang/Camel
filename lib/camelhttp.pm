@@ -36,6 +36,9 @@ sub camelHttpCore{
 				if (_getFile($path) eq "YES"){		
 					if (($req->method eq 'POST') or ($path =~ m/\.pl$/)) {
 						my $params = $req->content;
+						unless($params =~ m/\S+/){
+							$params = $req->uri->query;
+						}
 						chomp($params);
 						$req->method("GET");
 						logger(0, "$0 - Executing $path");
@@ -45,6 +48,7 @@ sub camelHttpCore{
 						print OUT $result;
 						close OUT;
 						$con->send_file_response("$tmpfile");
+						undef($result);
 						system("rm -fr $tmpfile");
 						
 					} elsif ($req->method eq 'GET'){
@@ -85,6 +89,9 @@ sub _getRequestInfo{
 	print "=============================================== \n";
 	print "uri: \n" . $req->uri . "\n";
 	print "content: \n" . $req->content . "\n";
+	#my $s = $req->uri;
+	#$s =~ s/$req->uri->path//;
+	print "parameters via  url: \n" . $req->uri->query . "\n";
 	print "as_string: \n" . $req->as_string . "\n";
 	print "=============================================== \n";
 }
