@@ -3,11 +3,11 @@ package camellogger;
 use strict;
 use FileHandle;  
 use camelutils;
+use camelxml;
 
 use Exporter;
 our @ISA=('Exporter');
-our @EXPORT=('logger',
-'createLogFile');
+our @EXPORT=('logger');
 
 # for internal development only
 my $debug = 0;
@@ -18,8 +18,10 @@ sub debugPrint
  }
 }
 
-my $log_dir = getOSPath("../logs");
-my $base_dir = getOSPath("../webapps"); 
+my $xmlinst = camelxml->new();
+my $log_dir = $xmlinst->{LogDir};
+my $base_dir = $xmlinst->{BaseDir};
+my $debug_level = $xmlinst->{DebugLevel};
 # level - 0 - ERROR - Error info 
 # level - 1 - INFO - useful info
 # level - 2 - Dev - Debug info
@@ -35,19 +37,21 @@ sub logger{
 }
 
 sub getLogLevel{
-	return 2;
+	return $debug_level;
 }
 
 sub getLogFilename{
 	my @files = <$log_dir/*>;
 	my $logfilename = pop @files;
+	#unless (defined $logfilename){
+	#	$logfilename = createLogFile();
+	#}
 	return $logfilename;
 }
 
 sub createLogFile{
 	my $date = getDate();
 	my $filename = getOSPath("$log_dir" . "/" . "camel." . $date . ".log");
-	logger(2,"creating log file $filename");
 	open OUT, "> $filename" or die "can't create log file $filename $!";
 	close OUT;
 }

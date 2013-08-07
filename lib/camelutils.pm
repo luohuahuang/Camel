@@ -7,6 +7,7 @@ use File::Copy;
 use File::Basename;
 use Time::localtime;
 use Config;
+use camelxml;
 
 use Exporter;
 our @ISA=('Exporter');
@@ -16,7 +17,8 @@ our @EXPORT=('getOSPath',
 'loader',
 '%fshash');
 
-my $base_dir = getOSPath("../webapps"); 
+my $xmlinst = camelxml->new();
+my $base_dir = $xmlinst->{BaseDir};
 
 sub getOSPath {
 	my ($path) = @_;
@@ -49,7 +51,7 @@ sub getRand {
 	return int(rand($range));
 }
 
-sub loader{
+sub loadUri{
 	my @files = `find $base_dir -type f -print`;
 	chomp (@files);
 	foreach (@files){

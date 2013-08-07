@@ -1,0 +1,1 @@
+Camel Server requires temp directory to work properly. Please do NOT delete it.

@@ -7,12 +7,20 @@ use Carp;
 use FileHandle;  
 use camellogger;
 use camelutils;
+use camelxml;
 
-my $portno = "8080";
-my $base_dir = "../webapps";
-my $temp_dir = "../temp";
-my $SERVER = HTTP::Daemon->new(LocalPort => $portno, LocalAddr => 'localhost') or die; 
-loader();
+my $xmlinst = camelxml->new();
+my $portno = $xmlinst->{PortNumber};
+my $base_dir = $xmlinst->{BaseDir};
+my $temp_dir = $xmlinst->{TemporaryDir};
+my $host = $xmlinst->{ServerHost};
+my $logpath = camellogger::getLogFilename();
+
+camellogger::createLogFile();
+
+logger(0, "$0 - Camel is starting - Logging in $logpath");
+logger(0, "$0 - Camel is listening at host: $host, port: $portno");
+my $SERVER = HTTP::Daemon->new(LocalPort => $portno, LocalAddr => $host) or die; 
 camelHttpCore();
 
 END{
@@ -32,7 +40,7 @@ sub camelHttpCore{
 			while (my $req = $con->get_request){
 				my $path = $base_dir . $req->uri->path;
 				#_getRequestInfo($req);
-				logger(0, "$0 - Camel is working for - GET $path ");
+				logger(0, "$0 - Camel is working for $path ");
 				if (_getFile($path) eq "YES"){		
 					if (($req->method eq 'POST') or ($path =~ m/\.pl$/)) {
 						my $params = $req->content;
@@ -41,10 +49,9 @@ sub camelHttpCore{
 						}
 						chomp($params);
 						$req->method("GET");
-						logger(0, "$0 - Executing $path");
 						my $result = `perl $path "$params"` or die "can't execute $path : $!";
 						my $tmpfile = $temp_dir . "/" . camelutils::getDate() . "_" . camelutils::getRand() . ".html";
-						open OUT, "> $tmpfile" or $con->send_error(RC_INTERNAL_SERVER_ERROR);;
+						open OUT, "> $tmpfile" or $con->send_error(RC_INTERNAL_SERVER_ERROR);
 						print OUT $result;
 						close OUT;
 						$con->send_file_response("$tmpfile");
@@ -52,7 +59,6 @@ sub camelHttpCore{
 						system("rm -fr $tmpfile");
 						
 					} elsif ($req->method eq 'GET'){
-						logger(0, "$0 - Retrieving $path");
 						$con->send_file_response("$path");
 					} else {
 						$con->send_error(RC_FORBIDDEN);
@@ -61,6 +67,7 @@ sub camelHttpCore{
 					logger(0, "$0 - Oops, broken request - $path");
 					$con->send_error(RC_NOT_FOUND);
 				}
+				logger(0, "$0 - Camel has done request of $path ");
 			}
 			close($con); 
 			exit;
@@ -72,6 +79,7 @@ sub camelHttpCore{
 
 sub _getFile{
 	my ($path) = @_;
+	camelutils::loadUri();
 	if ($fshash{"$path"}){
 		return "YES";
 	} else {
@@ -82,6 +90,7 @@ sub _getFile{
 sub _destroy {
 	logger(0, "$0 - Camel is destroying itself");
 	close ($SERVER) if (defined $SERVER);
+	undef $SERVER;
 }
 
 sub _getRequestInfo{
@@ -89,8 +98,6 @@ sub _getRequestInfo{
 	print "=============================================== \n";
 	print "uri: \n" . $req->uri . "\n";
 	print "content: \n" . $req->content . "\n";
-	#my $s = $req->uri;
-	#$s =~ s/$req->uri->path//;
 	print "parameters via  url: \n" . $req->uri->query . "\n";
 	print "as_string: \n" . $req->as_string . "\n";
 	print "=============================================== \n";

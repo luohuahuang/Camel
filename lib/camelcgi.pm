@@ -53,7 +53,6 @@ sub parseContent{
 
 sub getParams{
 	my $s = shift;
-	#$s = "hahaid=haha1&abcid=abc2&Submit=submit";
 	chomp($s);
 	if ($s =~ m/form-data/){
 		$s = parseContent($s);
@@ -66,7 +65,5 @@ sub getParams{
 	}
 	return %params;
 }
-
-#getParams();
 
 1;

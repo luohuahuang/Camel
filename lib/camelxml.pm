@@ -1,10 +1,12 @@
+package camelxml;
+
 use strict;
 use warnings;
 
 use XML::Simple;
 
+# This path must be a hard coded.
 my $ctxfile = "../conf/context.xml";
-
 my $parser = XML::Simple->new();
 my $data = $parser->XMLin($ctxfile);
 
@@ -12,7 +14,8 @@ sub new{
 	my $classname = shift;
 	my $self = {};
 	bless($self, $classname);
-	$self->_init(@_);
+	
+	$self->_init(readConfig());
 	return $self; 
 }
 
@@ -20,25 +23,22 @@ sub _init {
 	my $self = shift;
 	if (@_) {
 		my %extra = @_;
-		my $paramstr = $extra{"PARAMS"};# PARAMS is a keyword here
-		if (defined $paramstr) {
-			my %params = getParams($paramstr);
-			@$self{keys %params} = values %params;
-		}
+		@$self{keys %extra} = values %extra;
 	}
 }
 
-#debug();
-sub debug{
-	print $data->{ServerHost} . "\n";
-	print $data->{PortNumber} . "\n";
-	print $data->{BaseDir} . "\n";
-	print $data->{TemporaryDir} . "\n";
-	print $data->{LogDir} . "\n";
-	print $data->{DebugLevel} . "\n";
-	print $data->{WelcomeList}->{WeclomeFile}->[0] . "\n";
-	print $data->{WelcomeList}->{WeclomeFile}->[1] . "\n";
-	print $data->{WelcomeList}->{WeclomeFile}->[2] . "\n";
+sub readConfig{
+	my %config;
+	my @element = qw(ServerHost PortNumber BaseDir TemporaryDir LogDir DebugLevel);
+	foreach my $key (@element){
+		$config{$key} = $data->{$key};
+	}
+	my $count = 1;
+	for (@{ $data->{WelcomeList}->{WeclomeFile} }) {
+		my $id = "WelcomeFile" . $count++;
+    	$config{$id} = $_;
+	}
+	return %config;
 }
 
-
+1;
