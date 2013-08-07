@@ -9,7 +9,15 @@ use camellogger;
 use camelutils;
 use camelxml;
 
+sub new{
+	my $classname = shift;
+	my $self = {};
+	bless($self, $classname);
+	return $self; 
+}
+
 my $xmlinst = camelxml->new();
+
 my $portno = $xmlinst->{PortNumber};
 my $base_dir = $xmlinst->{BaseDir};
 my $temp_dir = $xmlinst->{TemporaryDir};
@@ -17,10 +25,12 @@ my $host = $xmlinst->{ServerHost};
 my $logpath = camellogger::getLogFilename();
 
 camellogger::createLogFile();
+camelutils::loadUri();
 
 logger(0, "$0 - Camel is starting - Logging in $logpath");
 logger(0, "$0 - Camel is listening at host: $host, port: $portno");
 my $SERVER = HTTP::Daemon->new(LocalPort => $portno, LocalAddr => $host) or die; 
+
 camelHttpCore();
 
 END{
@@ -65,7 +75,14 @@ sub camelHttpCore{
 					}
 				} else {
 					logger(0, "$0 - Oops, broken request - $path");
-					$con->send_error(RC_NOT_FOUND);
+					my $wlcpage = _getWelcomePage($req->uri->path);
+					if (defined $wlcpage) {
+						logger(0, "$0 - Oops, sending welcome page $wlcpage");
+						$req->method("GET");
+						$con->send_redirect("$wlcpage");
+					} else {
+						$con->send_error(RC_NOT_FOUND);
+					}
 				}
 				logger(0, "$0 - Camel has done request of $path ");
 			}
@@ -79,12 +96,28 @@ sub camelHttpCore{
 
 sub _getFile{
 	my ($path) = @_;
-	camelutils::loadUri();
 	if ($fshash{"$path"}){
 		return "YES";
 	} else {
 		return "NO";
 	}
+}
+
+sub _getWelcomePage{
+	my $path = shift;
+	my ($t,$appsname) = split(/\//,$path);
+	my $s = "WelcomeFile";
+	my $count = 1;
+	while(my $w = $xmlinst->{"WelcomeFile" . $count}){
+		if($xmlinst->{"WelcomeFile" . $count}){
+			my $p = "$base_dir" . "/" . $appsname . "/" . $w;
+			if (_getFile($p) eq "YES"){
+				return "/" . $appsname . "/" . $w;
+			}
+		}
+		$count++;
+	}	
+	return undef;
 }
 
 sub _destroy {

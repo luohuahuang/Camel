@@ -33,6 +33,7 @@ sub logger{
 		open OUT, ">> $currentlog";
 		print OUT "$time - $logstr \n";
 		close OUT;
+		print "$time - $logstr \n";
 	} 
 }
 
