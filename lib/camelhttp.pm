@@ -49,7 +49,7 @@ sub camelHttpCore{
 			die logger(0, "$0 - Camel can't fork a worker : $!") unless defined $pid;
 			while (my $req = $con->get_request){
 				my $path = $base_dir . $req->uri->path;
-				#_getRequestInfo($req);
+				_getRequestInfo($req);
 				logger(0, "$0 - Camel is working for $path ");
 				if (_getFile($path) eq "YES"){		
 					if (($req->method eq 'POST') or ($path =~ m/\.pl$/)) {
@@ -70,10 +70,13 @@ sub camelHttpCore{
 						
 					} elsif ($req->method eq 'GET'){
 						$con->send_file_response("$path");
-					} else {
+					} elsif ($req->method eq 'HEAD'){
+						# by deafult, HTTP/1.1 200 OK
+						$con->send_basic_header;
+					}else {
 						$con->send_error(RC_FORBIDDEN);
 					}
-				} else {
+				} elsif ($req->method ne 'HEAD') {
 					logger(0, "$0 - Oops, broken request - $path");
 					my $wlcpage = _getWelcomePage($req->uri->path);
 					if (defined $wlcpage) {
