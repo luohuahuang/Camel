@@ -52,7 +52,7 @@ sub getRand {
 }
 
 sub loadUri{
-	my @files = `find $base_dir -type f -print`;
+	my @files = `find $base_dir -type f -print` or die logger(0, "$0 - can't retrieve URI information : $!");
 	chomp (@files);
 	foreach (@files){
 		$fshash{$_}++;

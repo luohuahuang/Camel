@@ -30,11 +30,12 @@ sub logger{
 	if ($level le getLogLevel()){
 		my $currentlog = getLogFilename();
 		my $time = getDate();
-		open OUT, ">> $currentlog";
+		open OUT, ">> $currentlog" or die "can't open log file $currentlog";
 		print OUT "$time - $logstr \n";
 		close OUT;
 		print "$time - $logstr \n";
 	} 
+	return 0;
 }
 
 sub getLogLevel{
@@ -55,6 +56,7 @@ sub createLogFile{
 	my $filename = getOSPath("$log_dir" . "/" . "camel." . $date . ".log");
 	open OUT, "> $filename" or die "can't create log file $filename $!";
 	close OUT;
+	return $filename;
 }
 
 1;
