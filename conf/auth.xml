@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- Camel Web Server -->
+<!-- The contents of this file will be loaded for each web application -->
+<Auth>
+	<role rolename="administrator"/>
+	<role rolename="update"/>
+	<role rolename="view"/>
+	<user username="admin" password="admin123" roles="administrator,view,update"/>
+	<user username="luhuang" password="luhuang123" roles="view, update"/>
+	<user username="homer" password="simpsons" roles="view"/> 
+	<user username="update1" password="update123"/> 
+	<user username="view1" password="view123"/> 
+	<user username="view2" password="view123"/> 
+    
+    <pagecontrol>
+        <page path="/firstapp/auth_admin.pl">
+        	<roles>administrator</roles>
+        	<users>luhuang</users>
+        </page>
+        <page path="/firstapp/auth_update.pl">
+        	<roles>update</roles>
+        	<users>luhuang</users>
+        </page>
+        <page path="/firstapp/auth_view.pl">
+        	<roles>update</roles>
+        	<users>view1,view2</users>
+        </page>
+        <page path="/firstapp/welcome.html">
+        	<roles>update</roles>
+        	<users>view1,view2</users>
+        </page>
+    </pagecontrol>
+</Auth>
