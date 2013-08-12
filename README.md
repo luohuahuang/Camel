@@ -1,4 +1,4 @@
-# Camel Server – a Pure Web Server v.1.0  
+# Camel Server – a Pure Perl Web Server
 Camel  v.1.0 - Aug 12th 2013
 
 Table of Contents
