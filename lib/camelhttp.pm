@@ -71,17 +71,9 @@ sub camelHttpCore{
 					logger(0, "$0 - $params{username} $params{password} " . $req->uri->path . "- $auth");
 					if (($auth eq UNAUTH) or ($auth eq WRGACNT) or ($auth eq NOPRVS)) {
 						$req->method("GET");
-						#my $params = "originaluri=" . $req->uri->path . "\&" . "message=" . $AUTHHASH{$auth};
-						my $params = "originaluri=" . $req->uri->path;
+						my $params = "originaluri=" . $req->uri->path . "\&" . "message=" . $AUTHHASH{$auth};
 						my $path = $manager_login;
-						my $result = `perl $path "$params"` or die "can't execute $path : $!";
-						my $tmpfile = $temp_dir . "/" . camelutils::getDate() . "_" . camelutils::getRand() . ".html";
-						open OUT, "> $tmpfile" or $con->send_error(RC_INTERNAL_SERVER_ERROR);
-						print OUT $result;
-						close OUT;
-						$con->send_file_response("$tmpfile");
-						undef($result);
-						system("rm -fr $tmpfile");
+						_send_file_response ($path, $temp_dir, $params, $con);
 					} else {
 						if (($req->method eq 'POST') or ($path =~ m/\.pl$/)) {
 						my $params = $req->content;
@@ -90,14 +82,7 @@ sub camelHttpCore{
 						}
 						chomp($params);
 						$req->method("GET");
-						my $result = `perl $path "$params"` or die "can't execute $path : $!";
-						my $tmpfile = $temp_dir . "/" . camelutils::getDate() . "_" . camelutils::getRand() . ".html";
-						open OUT, "> $tmpfile" or $con->send_error(RC_INTERNAL_SERVER_ERROR);
-						print OUT $result;
-						close OUT;
-						$con->send_file_response("$tmpfile");
-						undef($result);
-						system("rm -fr $tmpfile");
+						_send_file_response ($path, $temp_dir, $params, $con);
 						} elsif ($req->method eq 'GET'){
 							$con->send_file_response("$path");
 						} elsif ($req->method eq 'HEAD'){
@@ -161,6 +146,7 @@ sub _destroy {
 	undef $SERVER;
 }
 
+#debug subroutine
 sub _getRequestInfo{
 	my $req = shift;
 	print "=============================================== \n";
@@ -169,6 +155,26 @@ sub _getRequestInfo{
 	print "parameters via  url: \n" . $req->uri->query . "\n";
 	print "as_string: \n" . $req->as_string . "\n";
 	print "=============================================== \n";
+}
+
+sub _send_file_response {
+	my $path     = shift;
+	my $temp_dir = shift;
+	my $params   = shift;
+	my $con      = shift;
+
+	my $result = `perl $path "$params"` or die "can\'t execute $path : $!";
+	my $tmpfile =
+	    $temp_dir . "/"
+	  . camelutils::getDate() . "_"
+	  . camelutils::getRand() . ".html";
+	open OUT, "> $tmpfile" or $con->send_error(RC_INTERNAL_SERVER_ERROR);
+	print OUT $result;
+	close OUT;
+	$con->send_file_response("$tmpfile");
+	undef($result);
+	system("rm -fr $tmpfile");
+	return ( $result, $tmpfile );
 }
 
 

@@ -14,7 +14,7 @@ img {border: none;}
 </head>
 <body>
 <p>*** Camel Server - Applications Login Portal ***</p>
-<p>You are going to $cgiinst->{originaluri}. $cgiinst->{message1}</p>
+<p>You are going to $cgiinst->{originaluri}. $cgiinst->{message}</p>
 <form action="$cgiinst->{originaluri}" method="post">
 <p>User name: &nbsp;&nbsp;<input type="text" name="username" value="apps"/></p>
 <p>Password: &nbsp;&nbsp;&nbsp;&nbsp;<input type="password" name="password" /></p>
