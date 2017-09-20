@@ -56,14 +56,14 @@ luhuang@luhuang-VirtualBox:~/workspace/Camel/bin$ sh startup.sh
 ## Architecure & Technology
 The architecure of this server is very straight forward. It has similar file system layout as Apache Tomcat (Hats off to Tomcat!). You can refer to below links for your interested topics.
 
-* Introduction: http://luohuahuang.com/2013/08/12/camel-a-pure-perl-web-server/  
-* Socket: http://luohuahuang.com/2013/08/04/perl-in-socket/ 
-* HTTP::Daemon: http://luohuahuang.com/2013/08/05/httpdaemon-in-perl/ 
-* CGI Engine: http://luohuahuang.com/2013/08/05/tricky-way-to-instantiate-a-class-in-perl/ 
-* Form: http://luohuahuang.com/2013/08/06/form-content-enctype/ 
-* XML Engine: http://luohuahuang.com/2013/08/07/parsing-xml-in-perl/ 
-* Testing: http://luohuahuang.com/2013/08/08/perl-testing/ 
-* Authentication: http://luohuahuang.com/2013/08/12/auth-mechanism-in-camel/ 
+* Introduction: http://luohuahuang.org/2013/08/12/camel-a-pure-perl-web-server/  
+* Socket: http://luohuahuang.org/2013/08/04/perl-in-socket/ 
+* HTTP::Daemon: http://luohuahuang.org/2013/08/05/httpdaemon-in-perl/ 
+* CGI Engine: http://luohuahuang.org/2013/08/05/tricky-way-to-instantiate-a-class-in-perl/ 
+* Form: http://luohuahuang.org/2013/08/06/form-content-enctype/ 
+* XML Engine: http://luohuahuang.org/2013/08/07/parsing-xml-in-perl/ 
+* Testing: http://luohuahuang.org/2013/08/08/perl-testing/ 
+* Authentication: http://luohuahuang.org/2013/08/12/auth-mechanism-in-camel/ 
 
 ## Configuration
 The section outlines the configuration options that are available in this server.
@@ -117,7 +117,7 @@ currently authentication supports .pl extension only.
 ## When all else fails
 You can reach me at
 Email: luohua.huang@gmail.com
-Blog: http://luohuahuang.com 
+Blog: http://luohuahuang.org 
 
   
 
